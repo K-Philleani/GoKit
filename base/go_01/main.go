@@ -1,3 +1,4 @@
+// 开始
 package main
 
 import "fmt"

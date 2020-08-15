@@ -1,3 +1,4 @@
+// 接口
 package main
 
 import (

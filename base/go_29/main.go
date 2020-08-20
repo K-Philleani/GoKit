@@ -1,3 +1,4 @@
+// 通道的关闭
 package main
 
 import "fmt"

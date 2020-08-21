@@ -52,7 +52,7 @@ func deleteStudent() {
 	)
 	fmt.Print("请输入学号是哪个学号：")
 	fmt.Scanln(&deleteId)
-	// 2.重allStudent中去除
+	// 2.从allStudent中去除
 	delete(allStudent, deleteId)
 }
 func main() {

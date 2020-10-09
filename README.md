@@ -1,2 +1,2 @@
 #### Golang
-- GoStandard --Go语言标准库
+- bingo --Go学习笔记

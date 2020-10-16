@@ -6,10 +6,10 @@ import (
 	"log"
 )
 
-// Redis
+// redis
 var rdb *redis.Client
 
-// 初始化连接
+// 普通连接
 func initClient() (err error){
 	rdb = redis.NewClient(&redis.Options{
 		Addr: "124.70.71.78:6379",
@@ -23,35 +23,51 @@ func initClient() (err error){
 	return nil
 }
 
-func redisDemo() {
-	err := rdb.Set("score", 100, 0).Err()
+// 连接Redis哨兵模式
+func initFailoverClient() (err error){
+	rdb = redis.NewFailoverClient(&redis.FailoverOptions{
+		MasterName: "master",
+		SentinelAddrs: []string{"124.70.71.79:6379"},
+	})
+	_, err = rdb.Ping().Result()
 	if err != nil {
-		fmt.Printf("set score failed, err:%v\n", err)
 		return
 	}
-	val, err := rdb.Get("score").Result()
-	if err != nil {
-		fmt.Printf("get score failed, err:%v\n", err)
-		return
-	}
-	fmt.Println("score", val)
+	return nil
+}
 
-	val2, err := rdb.Get("name").Result()
-	if err == redis.Nil {
-		fmt.Println("name does not exist")
-	} else if err != nil {
-		fmt.Printf("get name failed, err:%v\n", err)
+// 连接Redis集群
+func initClusterClient() (err error) {
+	rdb := redis.NewClusterClient(&redis.ClusterOptions{
+		Addrs: []string{":9090"},
+	})
+	_, err = rdb.Ping().Result()
+	if err != nil {
 		return
-	} else {
-		fmt.Println("name", val2)
 	}
+	return nil
+}
+
+// set/get
+func redisSet() {
+	err := rdb.Set("name", "Kphilleani",0).Err()
+	if err != nil {
+		log.Printf("set failed, err: %v\n", err)
+		return
+	}
+	log.Println("set success")
+}
+func redisGet() {
+	val, err := rdb.Get("name").Result()
+	if err != nil {
+		fmt.Printf("get failed, err: %v\n", err)
+		return
+	}
+	fmt.Println("name", val)
 }
 
 func main() {
-	err := initClient()
-	if err != nil {
-		panic(err)
-	}
-	log.Println("redis success")
-	redisDemo()
+	initClient()
+	//redisSet()
+	redisGet()
 }
